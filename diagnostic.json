@@ -1,0 +1,23 @@
+{
+    "now": "2023-08-22T04:46:55.823Z",
+    "perfNow": 42702.59999996424,
+    "diagnosticCorrelation": "1f836d76-b29f-496b-b98d-3288b414f184",
+    "source": "DownloadSupportFiles",
+    "environment": {
+        "productName": "adf",
+        "buildVersion": "1.0.081823.5",
+        "environmentType": 3,
+        "resourceName": "ccocaCovidDataFactory",
+        "resourceRegion": "eastus",
+        "resourceGroup": "ccocaproyecto",
+        "subscriptionId": "c4cd70ae-aa5c-408e-b134-5a2dc6bbe220",
+        "sessionId": "088SobKGKIO93wjUlbySzf",
+        "operationId": "",
+        "gitType": "live",
+        "loggingKey": "942f62bd-b0b4-415e-aa92-3ad0ba761c81"
+    },
+    "additionalInfo": {
+        "selectedResource": "pl_ccoca_Ingesta_covid_bs_dl",
+        "selectedResourceType": "pipeline"
+    }
+}

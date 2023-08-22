@@ -1,0 +1,314 @@
+{
+    "name": "pl_ccoca_Ingesta_covid_bs_dl",
+    "properties": {
+        "activities": [
+            {
+                "name": "Validate if a File is present",
+                "description": "",
+                "type": "Validation",
+                "dependsOn": [],
+                "userProperties": [],
+                "typeProperties": {
+                    "dataset": {
+                        "referenceName": "ds_ccoca_covidDeaths_bs",
+                        "type": "DatasetReference"
+                    },
+                    "timeout": "7.00:00:00",
+                    "sleep": 10
+                }
+            },
+            {
+                "name": "Get Metadata1",
+                "type": "GetMetadata",
+                "dependsOn": [
+                    {
+                        "activity": "Validate if a File is present",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "7.00:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataset": {
+                        "referenceName": "ds_ccoca_covidDeaths_bs",
+                        "type": "DatasetReference"
+                    },
+                    "fieldList": [
+                        "exists",
+                        "columnCount",
+                        "itemType",
+                        "itemName",
+                        "structure"
+                    ],
+                    "storeSettings": {
+                        "type": "AzureBlobStorageReadSettings",
+                        "recursive": true,
+                        "enablePartitionDiscovery": false
+                    },
+                    "formatSettings": {
+                        "type": "DelimitedTextReadSettings"
+                    }
+                }
+            },
+            {
+                "name": "If Condition1",
+                "type": "IfCondition",
+                "dependsOn": [
+                    {
+                        "activity": "Get Metadata1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "userProperties": [],
+                "typeProperties": {
+                    "expression": {
+                        "value": "@equals(activity('Get Metadata1').output.columnCount,9)",
+                        "type": "Expression"
+                    },
+                    "ifFalseActivities": [
+                        {
+                            "name": "Output Error_copy1",
+                            "type": "WebActivity",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "7.00:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "url": "https://outputerror",
+                                "method": "POST",
+                                "body": "The Table Column Count doesn't meet the criteria"
+                            }
+                        }
+                    ],
+                    "ifTrueActivities": [
+                        {
+                            "name": "Copy Covid Data_copy1",
+                            "type": "Copy",
+                            "dependsOn": [],
+                            "policy": {
+                                "timeout": "7.00:00:00",
+                                "retry": 0,
+                                "retryIntervalInSeconds": 30,
+                                "secureOutput": false,
+                                "secureInput": false
+                            },
+                            "userProperties": [],
+                            "typeProperties": {
+                                "source": {
+                                    "type": "DelimitedTextSource",
+                                    "storeSettings": {
+                                        "type": "AzureBlobStorageReadSettings",
+                                        "recursive": true,
+                                        "enablePartitionDiscovery": false
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextReadSettings"
+                                    }
+                                },
+                                "sink": {
+                                    "type": "DelimitedTextSink",
+                                    "storeSettings": {
+                                        "type": "AzureBlobFSWriteSettings"
+                                    },
+                                    "formatSettings": {
+                                        "type": "DelimitedTextWriteSettings",
+                                        "quoteAllText": true,
+                                        "fileExtension": ".txt"
+                                    }
+                                },
+                                "enableStaging": false,
+                                "translator": {
+                                    "type": "TabularTranslator",
+                                    "mappings": [
+                                        {
+                                            "source": {
+                                                "name": "country",
+                                                "type": "String",
+                                                "physicalType": "String"
+                                            },
+                                            "sink": {
+                                                "name": "country",
+                                                "type": "String",
+                                                "physicalType": "String"
+                                            }
+                                        },
+                                        {
+                                            "source": {
+                                                "name": "country_code",
+                                                "type": "String",
+                                                "physicalType": "String"
+                                            },
+                                            "sink": {
+                                                "name": "country_code",
+                                                "type": "String",
+                                                "physicalType": "String"
+                                            }
+                                        },
+                                        {
+                                            "source": {
+                                                "name": "continent",
+                                                "type": "String",
+                                                "physicalType": "String"
+                                            },
+                                            "sink": {
+                                                "name": "continent",
+                                                "type": "String",
+                                                "physicalType": "String"
+                                            }
+                                        },
+                                        {
+                                            "source": {
+                                                "name": "population",
+                                                "type": "Int64",
+                                                "physicalType": "String"
+                                            },
+                                            "sink": {
+                                                "name": "population",
+                                                "type": "String",
+                                                "physicalType": "String"
+                                            }
+                                        },
+                                        {
+                                            "source": {
+                                                "name": "indicator",
+                                                "type": "String",
+                                                "physicalType": "String"
+                                            },
+                                            "sink": {
+                                                "name": "indicator",
+                                                "type": "String",
+                                                "physicalType": "String"
+                                            }
+                                        },
+                                        {
+                                            "source": {
+                                                "name": "daily_count",
+                                                "type": "String",
+                                                "physicalType": "String"
+                                            },
+                                            "sink": {
+                                                "name": "daily_count",
+                                                "type": "String",
+                                                "physicalType": "String"
+                                            }
+                                        },
+                                        {
+                                            "source": {
+                                                "name": "date",
+                                                "type": "DateTime",
+                                                "physicalType": "String"
+                                            },
+                                            "sink": {
+                                                "name": "date",
+                                                "type": "String",
+                                                "physicalType": "String"
+                                            }
+                                        },
+                                        {
+                                            "source": {
+                                                "name": "rate_14_day",
+                                                "type": "String",
+                                                "physicalType": "String"
+                                            },
+                                            "sink": {
+                                                "name": "rate_14_day",
+                                                "type": "String",
+                                                "physicalType": "String"
+                                            }
+                                        },
+                                        {
+                                            "source": {
+                                                "name": "source",
+                                                "type": "String",
+                                                "physicalType": "String"
+                                            },
+                                            "sink": {
+                                                "name": "source",
+                                                "type": "String",
+                                                "physicalType": "String"
+                                            }
+                                        }
+                                    ],
+                                    "typeConversion": true,
+                                    "typeConversionSettings": {
+                                        "allowDataTruncation": true,
+                                        "treatBooleanAsNumber": false
+                                    }
+                                }
+                            },
+                            "inputs": [
+                                {
+                                    "referenceName": "ds_ccoca_covidDeaths_bs",
+                                    "type": "DatasetReference"
+                                }
+                            ],
+                            "outputs": [
+                                {
+                                    "referenceName": "ds_ccoca_covidDeaths_raw_dl",
+                                    "type": "DatasetReference"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "name": "Delete File from Blob Storage",
+                "description": "",
+                "type": "Delete",
+                "dependsOn": [
+                    {
+                        "activity": "If Condition1",
+                        "dependencyConditions": [
+                            "Succeeded"
+                        ]
+                    }
+                ],
+                "policy": {
+                    "timeout": "7.00:00:00",
+                    "retry": 0,
+                    "retryIntervalInSeconds": 30,
+                    "secureOutput": false,
+                    "secureInput": false
+                },
+                "userProperties": [],
+                "typeProperties": {
+                    "dataset": {
+                        "referenceName": "ds_ccoca_covidDeaths_bs",
+                        "type": "DatasetReference"
+                    },
+                    "logStorageSettings": {
+                        "linkedServiceName": {
+                            "referenceName": "ls_ccoca_blob_covidbs",
+                            "type": "LinkedServiceReference"
+                        }
+                    },
+                    "enableLogging": true,
+                    "storeSettings": {
+                        "type": "AzureBlobStorageReadSettings",
+                        "recursive": true,
+                        "enablePartitionDiscovery": false
+                    }
+                }
+            }
+        ],
+        "annotations": [],
+        "lastPublishTime": "2023-08-19T07:30:50Z"
+    },
+    "type": "Microsoft.DataFactory/factories/pipelines"
+}
